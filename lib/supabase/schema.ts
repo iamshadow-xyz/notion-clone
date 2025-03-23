@@ -6,6 +6,7 @@ import {
   primaryKey,
   integer,
   varchar,
+  uuid,
 } from "drizzle-orm/pg-core";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -24,6 +25,17 @@ export const users = pgTable("user", {
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
+});
+
+export const posts = pgTable("posts", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  authorId: uuid()
+    .notNull()
+    .references(() => users.id),
+  title: varchar({ length: 255 }).notNull(),
+  content: text().notNull(),
 });
 
 export const accounts = pgTable(
